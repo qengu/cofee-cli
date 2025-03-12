@@ -1,10 +1,10 @@
 {
-  "name": "cofe",
+  "name": "cofee-cli",
   "version": "1.0.0",
-  "description": "",
+  "description": "A CLI made to help keep track of assignments. Type \"cofe -h\" to get started",
   "main": "./bin/index.js",
   "bin": {
-    "cofe": "./bin/index.js"
+    "cofe": "bin/index.js"
   },
   "keywords": [],
   "author": "",
