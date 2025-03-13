@@ -3,12 +3,16 @@ import { writeFileSync, readFileSync } from "node:fs";
 
 const ASSIGNMENTS_DIR = import.meta.dirname + "/assignments.json";
 
-function readAssignments() {
-  const assignmentObject = JSON.parse(
-    readFileSync(ASSIGNMENTS_DIR, { encoding: "utf-8" }),
-  );
+function readAssignments(dir = ASSIGNMENTS_DIR) {
+  let fileContents = readFileSync(dir, { encoding: "utf-8" });
 
+  if (fileContents === ""){
+    clearAssignments(dir);
+  }
+
+  const assignmentObject = fileContents === "" ? [] : JSON.parse(fileContents);
   const assignments = [];
+
   for (const assignment of assignmentObject) {
     assignments.push(
       new Assignment(
@@ -33,8 +37,13 @@ function appendAssignment(assignment) {
   writeFileSync(ASSIGNMENTS_DIR, JSON.stringify(currentAssignments, null, 4));
 }
 
-function clearAssignments() {
-  writeFileSync(ASSIGNMENTS_DIR, "[]");
+function clearAssignments(dir) {
+  writeFileSync(dir, JSON.stringify([]));
 }
 
-export { appendAssignment, writeAssignments, readAssignments, clearAssignments };
+export {
+  appendAssignment,
+  writeAssignments,
+  readAssignments,
+  clearAssignments,
+};

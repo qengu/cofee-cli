@@ -1,6 +1,6 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
-import { isValidDateInput } from "../../lib/prompt.js";
+import { isValidDateInput } from "../../lib/prompt-tools.js";
 
 describe("Utility tests", () => {
 
