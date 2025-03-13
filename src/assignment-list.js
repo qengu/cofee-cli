@@ -3,6 +3,7 @@ import {
   appendAssignment,
   writeAssignments,
 } from "../data/write-data.js";
+import { dueDateDifference } from "../lib/date-tools.js";
 import {
   promptEditAssignment,
   promptEditAssignmentIndex,
@@ -67,7 +68,9 @@ function printAssignments(indexed = false) {
   console.log(ORANGE + "Assignments:" + RESET);
   console.log("\n");
 
-  const assignments = sortByDueDate(readAssignments());
+  const assignments = readAssignments().sort((assignmentOne, assignmentTwo) => 
+    assignmentOne.dueDate.getTime() - assignmentTwo.dueDate.getTime());
+
   let i = 1;
   for (const assignment of assignments) {
     if (indexed) process.stdout.write("[" + RED + i.toString() + RESET + "] ");
@@ -82,7 +85,7 @@ function printAssignment(assignment) {
   const lecture = assignment.lecture;
   const dueDate = assignment.dueDate;
 
-  const timeUntilDueDate = dueDateDifferenceInDays(dueDate, Date.now());
+  const timeUntilDueDate = dueDateDifference(dueDate, Date.now());
 
   const formatDueDate = (dueDate) => {
     return new Intl.DateTimeFormat("en-US", {
@@ -99,34 +102,6 @@ function printAssignment(assignment) {
     `${timeUntilDueDate.days} days, ${timeUntilDueDate.hours} hours, ${timeUntilDueDate.minutes} minutes, ${timeUntilDueDate.seconds} seconds`
   + RESET;
   console.log(assignmentFormatted);
-}
-
-function sortByDueDate(assignments) {
-  assignments.sort((assignmentOne, assignmentTwo) => {
-    return assignmentOne.dueDate.getTime() - assignmentTwo.dueDate.getTime();
-  });
-  return assignments;
-}
-
-function dueDateDifferenceInDays(dateOne, dateTwo) {
-  const msDifference = dateOne - dateTwo;
-  const secondsDifference = Math.round(msDifference / 1000);
-
-  const secondsRemainder = secondsDifference % 60;
-  const minutesDifference = (secondsDifference - secondsRemainder) / 60;
-
-  const minutesRemainder = minutesDifference % 60;
-  const hoursDifference = (minutesDifference - minutesRemainder) / 60;
-
-  const hoursRemainder = hoursDifference % 24;
-  const daysDifference = (hoursDifference - hoursRemainder) / 24;
-
-  return {
-    days: daysDifference,
-    hours: hoursRemainder,
-    minutes: minutesRemainder,
-    seconds: secondsRemainder,
-  };
 }
 
 export { addAssignment, removeAssignment, printAssignments, editAssignment };
