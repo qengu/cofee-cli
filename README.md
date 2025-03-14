@@ -2,6 +2,9 @@
 
 ---
 
+Quick note: You may and probably will have to type the commands with admin privileges as there is data reading/writing.  
+For example, on linux, prefix commands with ```sudo```  
+
 I built this CLI program to help me keep track of assignments and due dates.   
 
 ### Install
@@ -18,7 +21,6 @@ I built this CLI program to help me keep track of assignments and due dates.
 
 #### Type:
 ```cofe -h```  
-
 after installation to get started with all the commands.  
 The prefix for this CLI is
 ```cofe```  
