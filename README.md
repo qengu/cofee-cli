@@ -22,6 +22,6 @@ I built this CLI program to help me keep track of assignments and due dates.
 after installation to get started with all the commands.  
 The prefix for this CLI is
 ```cofe```  
-and not  
-```coffe```  
+and not
+```cofee```,
 despite the name of the package.  
