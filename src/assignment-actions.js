@@ -15,12 +15,13 @@ export async function editAssignment() {
   printAssignments(true);
 
   const index = await promptEditAssignmentIndex();
-  const assignmentBeforeEdit = assignments[index - 1];
 
   if (!isValidIndex(index - 1)) {
     console.log("Entry is not valid!");
     return;
   }
+
+  const assignmentBeforeEdit = assignments[index - 1];
 
   promptEditAssignment(assignmentBeforeEdit)
     .then((value) => {

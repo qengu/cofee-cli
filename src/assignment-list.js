@@ -25,7 +25,7 @@ export function tryRemoveAssignment(assignmentName, dir = "") {
 }
 
 export function isValidIndex(index) {
-  return (index > readAssignments().length || index <= 0);
+  return (index < readAssignments().length && index >= 0);
 }
 
 export async function tryEditAssignment(entry, assignment) {

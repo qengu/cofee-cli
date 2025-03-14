@@ -4,7 +4,13 @@ import { writeFileSync, readFileSync } from "node:fs";
 const ASSIGNMENTS_DIR = import.meta.dirname + "/assignments.json";
 
 function readAssignments(dir = ASSIGNMENTS_DIR) {
-  let fileContents = readFileSync(dir, { encoding: "utf-8" });
+  let fileContents; 
+  try {
+    fileContents = readFileSync(dir, { encoding: "utf-8" });
+  } catch (error) {
+    fileContents = "";
+    writeFileSync(dir, "");
+  }
 
   if (fileContents === ""){
     clearAssignments(dir);
