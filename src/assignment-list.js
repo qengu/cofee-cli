@@ -112,9 +112,8 @@ function printAssignment(assignment) {
   const assignmentFormatted = formatAssignmentForDisplay(
     name,
     lecture,
-    dueDate,
-    timeUntilDueDate,
     formattedDueDate,
+    timeUntilDueDate,
   );
 
   console.log(assignmentFormatted);

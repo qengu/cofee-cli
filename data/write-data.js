@@ -30,11 +30,11 @@ function writeAssignments(assignments, dir = ASSIGNMENTS_DIR) {
   writeFileSync(dir, JSON.stringify(assignments, null, 4));
 }
 
-function appendAssignment(assignment) {
-  let currentAssignments = readAssignments();
+function appendAssignment(assignment, dir = ASSIGNMENTS_DIR) {
+  let currentAssignments = readAssignments(dir);
 
   currentAssignments.push(assignment);
-  writeFileSync(ASSIGNMENTS_DIR, JSON.stringify(currentAssignments, null, 4));
+  writeFileSync(dir, JSON.stringify(currentAssignments, null, 4));
 }
 
 function clearAssignments(dir) {

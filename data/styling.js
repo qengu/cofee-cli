@@ -1,7 +1,7 @@
-const colourWithID = (id) => "\x1b[" + id.toString() + "m";
+const colourWithID = (id) => "\x1b[38;5;" + id.toString() + "m";
 
 export const COLOURS = {
-  RESET: colourWithID(0),
+  RESET: "\x1b[000m",
   RED: colourWithID(31),
   ORANGE: colourWithID(214),
   DREAM: colourWithID(219),
@@ -14,16 +14,15 @@ export function formatAssignmentForDisplay(name, lecture, formattedDueDate, time
   const [dueDays, dueHours, dueMinutes, dueSeconds] = 
     [timeUntilDueDate.days, timeUntilDueDate.hours, timeUntilDueDate.minutes, timeUntilDueDate.seconds];
 
-  const formattedAssignment = 
-  `[${COLOURS.MAGENTA}${lecture}]
-   ${COLOURS.DREAM}${name}${COLOURS.RESET}
+  const formattedAssignment = [
+    "[" + COLOURS.MAGENTA + lecture + COLOURS.RESET + "]", 
+    COLOURS.DREAM + name + COLOURS.RESET,
+    "",
+    "Due By: " + formattedDueDate,
+    "Due In: " + COLOURS.REDHIGHLIGHT + dueDays + " days, " + dueHours + " hours, "
+    + dueMinutes + " minutes, " + dueSeconds + " seconds" + COLOURS.RESET
+  ]
 
-   Due By: ${formattedDueDate}
-
-   Due In: 
-   ${COLOURS.REDHIGHLIGHT}${dueDays} days, ${dueHours} hours, ${dueMinutes} minutes, ${dueSeconds} seconds
-   ${COLOURS.RESET}`
-
-  return formattedAssignment
+  return formattedAssignment.join("\n");
 
 }

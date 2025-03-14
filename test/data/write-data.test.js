@@ -1,11 +1,12 @@
 import { afterEach, beforeEach, describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { readdirSync, readFileSync, writeFileSync } from "node:fs";
-import { readAssignments, writeAssignments } from "../../data/write-data.js";
+import { appendAssignment, readAssignments, writeAssignments } from "../../data/write-data.js";
 import Assignment from "../../src/assignment.js";
-import { dateDifference, getDateInDashedFormat } from "../../lib/date-tools.js";
 
 const ASSIGNMENTS_READASSIGNMENTS_DIR = import.meta.dirname + "/data_files";
+const emptyFilePath = ASSIGNMENTS_READASSIGNMENTS_DIR + "/empty-file.test.json";
+const oneAssignmentFilePath = ASSIGNMENTS_READASSIGNMENTS_DIR + "/one-assignment.test.json";
 
 describe("Writing and reading data tests", () => {
 
@@ -31,36 +32,8 @@ describe("Writing and reading data tests", () => {
 
   })
 
-  describe("dueDateDifference tests", () => {
-
-    const dateOne = new Date(1999, 0, 13, 23, 59);
-    const dateTwo = new Date(2000, 1, 29, 12, 0);
-    const dateThree = new Date(2199, 11, 31, 1, 0, 13);
-
-    it("General tests", () => {
-      assert.deepEqual(dateDifference(dateTwo, dateOne), { days: 411, hours: 12, minutes: 1, seconds: 0 });
-      assert.deepEqual(dateDifference(dateThree, dateTwo), {days: 72988, hours: 13, minutes: 0, seconds: 13});
-    })
-
-  })
-
-  describe("getDateInDashedFormat tests", () => {
-
-    const dateOne = new Date(1999, 0, 13, 23, 59);
-    const dateTwo = new Date(2000, 1, 29, 12, 0);
-    const dateThree = new Date(2199, 11, 31, 0, 0);
-
-    it("Date with single digit values", () => {
-      assert.equal(getDateInDashedFormat(dateOne), "1999-01-13-23-59");
-      assert.equal(getDateInDashedFormat(dateTwo), "2000-02-29-12-00");
-      assert.equal(getDateInDashedFormat(dateThree), "2199-12-31-00-00");
-    })
-
-  })
-
   describe("readAssignments tests", () => {
     it("Empty file", () => {
-      const emptyFilePath = ASSIGNMENTS_READASSIGNMENTS_DIR + "/empty-file.test.json";
       assert.deepEqual(readAssignments(emptyFilePath), []);
     });
     it("Empty array", () => {
@@ -79,4 +52,26 @@ describe("Writing and reading data tests", () => {
     });
   });
 
-});
+  describe("appendAssignments tests", () => {
+
+    it("Append to empty file", () => {
+      const assignmentToAppend = new Assignment("Chemistry HW #2", "CHEM", new Date(1980, 3, 2, 2, 2));
+      appendAssignment(assignmentToAppend, emptyFilePath);
+      assert.deepEqual(readAssignments(emptyFilePath), [assignmentToAppend]);
+    })
+
+    it("Append to non-empty file", () => {
+      const existingAssignments = JSON.parse(readFileSync(oneAssignmentFilePath, { encoding: "utf-8" }));
+      const firstAssignment = existingAssignments[0];
+      existingAssignments[0] = new Assignment(firstAssignment.name, firstAssignment.lecture, new Date(firstAssignment.dueDate));
+      const assignmentToAppend = new Assignment("Biology HW #2", "BIOL", new Date(2098, 11, 2, 2, 2));
+      console.log(readAssignments(oneAssignmentFilePath));
+      appendAssignment(assignmentToAppend, oneAssignmentFilePath);
+      console.log(readAssignments(oneAssignmentFilePath));
+      existingAssignments.push(assignmentToAppend);
+      assert.deepEqual(readAssignments(oneAssignmentFilePath), existingAssignments);
+    })
+
+  })
+
+})
