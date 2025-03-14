@@ -1,22 +1,14 @@
 #!/usr/bin/env node
 
 import { helpMessage } from "../data/display-messages.js";
-import promptAssignment from "../lib/prompt-assignment.js";
 import packageInfo from "../package.json" with { type: "json" };
-import {
-  addAssignment,
-  editAssignment,
-  printAssignments,
-  removeAssignment,
-} from "../src/assignment-list.js";
+import { addAssignment, editAssignment, printAssignments, removeAssignment } from "../src/assignment-actions.js";
 
 const argv = process.argv.slice(2);
 
 switch (argv[0]) {
   case "add":
-    promptAssignment()
-      .then((value) => addAssignment(value))
-      .catch((error) => console.log(error));
+    addAssignment();
     break;
   case "list":
     console.clear();
@@ -24,7 +16,7 @@ switch (argv[0]) {
     break;
   case "edit":
     console.clear();
-    await editAssignment();
+    editAssignment();
     break;
   case "remove":
     removeAssignment();
