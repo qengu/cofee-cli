@@ -2,7 +2,6 @@
 
 import { helpMessage } from "../data/display-messages.js";
 import promptAssignment from "../lib/prompt-assignment.js";
-import promptRemoveAssignment from "../lib/prompt-remove-assignment.js";
 import packageInfo from "../package.json" with { type: "json" };
 import {
   addAssignment,
@@ -28,12 +27,7 @@ switch (argv[0]) {
     await editAssignment();
     break;
   case "remove":
-    const assignmentName = await promptRemoveAssignment();
-    if (removeAssignment(assignmentName)) {
-      console.log("Successfully removed assignment: " + assignmentName);
-    } else {
-      console.log("Could not find assignment with name: " + assignmentName);
-    }
+    removeAssignment();
     break;
   case "--help":
   case "help":

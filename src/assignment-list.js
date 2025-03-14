@@ -1,13 +1,15 @@
+import { on } from "node:events";
 import {
   readAssignments,
   appendAssignment,
   writeAssignments,
 } from "../data/write-data.js";
-import { dueDateDifference } from "../lib/date-tools.js";
+import { dateDifference } from "../lib/date-tools.js";
 import {
   promptEditAssignment,
   promptEditAssignmentIndex,
 } from "../lib/prompt-edit.js";
+import promptRemoveAssignment from "../lib/prompt-remove-assignment.js";
 
 const colour = (id) => "\x1b[" + id + "m";
 
@@ -21,7 +23,20 @@ function addAssignment(assignment) {
   appendAssignment(assignment);
 }
 
-function removeAssignment(assignmentName) {
+export async function removeAssignment() {
+
+  const assignmentName = await promptRemoveAssignment();
+  const successfulRemoval = tryRemoveAssignment(assignmentName);
+
+  if (successfulRemoval) {
+    console.log(`Assignment [${assignmentName}] has been removed`);
+  } else {
+    console.log("Assignment with given name could not be found!");
+  }
+}
+
+// returns false if assignment with given name not found, true otherwise
+function tryRemoveAssignment(assignmentName) {
   const assignments = readAssignments();
   for (let i = 0; i < assignments.length; i++) {
     if (assignments[i].name === assignmentName) {
@@ -85,7 +100,7 @@ function printAssignment(assignment) {
   const lecture = assignment.lecture;
   const dueDate = assignment.dueDate;
 
-  const timeUntilDueDate = dueDateDifference(dueDate, Date.now());
+  const timeUntilDueDate = dateDifference(dueDate, Date.now());
 
   const formatDueDate = (dueDate) => {
     return new Intl.DateTimeFormat("en-US", {
@@ -104,4 +119,4 @@ function printAssignment(assignment) {
   console.log(assignmentFormatted);
 }
 
-export { addAssignment, removeAssignment, printAssignments, editAssignment };
+export { addAssignment, printAssignments, editAssignment };
