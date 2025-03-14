@@ -26,8 +26,8 @@ function readAssignments(dir = ASSIGNMENTS_DIR) {
   return assignments;
 }
 
-function writeAssignments(assignments) {
-  writeFileSync(ASSIGNMENTS_DIR, JSON.stringify(assignments, null, 4));
+function writeAssignments(assignments, dir = ASSIGNMENTS_DIR) {
+  writeFileSync(dir, JSON.stringify(assignments, null, 4));
 }
 
 function appendAssignment(assignment) {

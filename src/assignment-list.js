@@ -1,4 +1,5 @@
-import { on } from "node:events";
+import { COLOURS, formatAssignmentForDisplay } from "../data/styling.js";
+
 import {
   readAssignments,
   appendAssignment,
@@ -11,20 +12,11 @@ import {
 } from "../lib/prompt-edit.js";
 import promptRemoveAssignment from "../lib/prompt-remove-assignment.js";
 
-const colour = (id) => "\x1b[" + id + "m";
-
-export const RED = colour("31");
-const MAGENTA = "\x1b[38;5;104m";
-const REDHIGHLIGHT = "\x1b[38;5;203m"
-const ORANGE = "\x1b[38;5;214m"
-export const RESET = "\x1b[0m";
-
 function addAssignment(assignment) {
   appendAssignment(assignment);
 }
 
 export async function removeAssignment() {
-
   const assignmentName = await promptRemoveAssignment();
   const successfulRemoval = tryRemoveAssignment(assignmentName);
 
@@ -36,12 +28,14 @@ export async function removeAssignment() {
 }
 
 // returns false if assignment with given name not found, true otherwise
-function tryRemoveAssignment(assignmentName) {
-  const assignments = readAssignments();
+export function tryRemoveAssignment(assignmentName, dir = "") {
+  const assignments = dir === "" ? readAssignments() : readAssignments(dir);
   for (let i = 0; i < assignments.length; i++) {
     if (assignments[i].name === assignmentName) {
       assignments.splice(i, 1);
-      writeAssignments(assignments);
+      dir === ""
+        ? writeAssignments(assignments)
+        : writeAssignments(assignments, dir);
       return true;
     }
   }
@@ -67,12 +61,15 @@ async function editAssignment() {
       assignments.push(value);
       writeAssignments(assignments);
 
-      console.log("\n" + ORANGE + "Before Change:" + RESET + "\n");
+      console.log(
+        "\n" + COLOURS.ORANGE + "Before Change:" + COLOURS.RESET + "\n",
+      );
       printAssignment(assignmentBeforeEdit);
-      console.log("\n\n" + ORANGE + "After Change:" + RESET + "\n");
+      console.log(
+        "\n\n" + COLOURS.ORANGE + "After Change:" + COLOURS.RESET + "\n",
+      );
       printAssignment(value);
       console.log("\n\n");
-
     })
     .catch((error) => {
       console.log(error);
@@ -80,15 +77,20 @@ async function editAssignment() {
 }
 
 function printAssignments(indexed = false) {
-  console.log(ORANGE + "Assignments:" + RESET);
+  console.log(COLOURS.ORANGE + "Assignments:" + COLOURS.RESET);
   console.log("\n");
 
-  const assignments = readAssignments().sort((assignmentOne, assignmentTwo) => 
-    assignmentOne.dueDate.getTime() - assignmentTwo.dueDate.getTime());
+  const assignments = readAssignments().sort(
+    (assignmentOne, assignmentTwo) =>
+      assignmentOne.dueDate.getTime() - assignmentTwo.dueDate.getTime(),
+  );
 
   let i = 1;
   for (const assignment of assignments) {
-    if (indexed) process.stdout.write("[" + RED + i.toString() + RESET + "] ");
+    if (indexed)
+      process.stdout.write(
+        "[" + COLOURS.RED + i.toString() + COLOURS.RESET + "] ",
+      );
     printAssignment(assignment);
     i++;
     console.log("\n");
@@ -99,23 +101,22 @@ function printAssignment(assignment) {
   const name = assignment.name;
   const lecture = assignment.lecture;
   const dueDate = assignment.dueDate;
-
   const timeUntilDueDate = dateDifference(dueDate, Date.now());
 
-  const formatDueDate = (dueDate) => {
-    return new Intl.DateTimeFormat("en-US", {
-      dateStyle: "full",
-      timeStyle: "long",
-      hour12: true
-    }).format(dueDate);
-  };
+  const formattedDueDate = new Intl.DateTimeFormat("en-US", {
+    dateStyle: "full",
+    timeStyle: "long",
+    hour12: true,
+  }).format(dueDate);
 
-  let assignmentFormatted = "[" + MAGENTA + lecture + RESET + "] \n";
-  assignmentFormatted +=
-    `${name} \nDue By: ${formatDueDate(assignment.dueDate)}\n` +
-    "Due In: " + REDHIGHLIGHT + 
-    `${timeUntilDueDate.days} days, ${timeUntilDueDate.hours} hours, ${timeUntilDueDate.minutes} minutes, ${timeUntilDueDate.seconds} seconds`
-  + RESET;
+  const assignmentFormatted = formatAssignmentForDisplay(
+    name,
+    lecture,
+    dueDate,
+    timeUntilDueDate,
+    formattedDueDate,
+  );
+
   console.log(assignmentFormatted);
 }
 
