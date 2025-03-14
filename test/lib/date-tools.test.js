@@ -90,6 +90,10 @@ describe("Date tests", () => {
       assert.equal(isValidDateInput("2001-12-31-21-59"), true);
     })
 
+    it("General Tests", () => {
+      assert.equal(isValidDateInput("2025-03-15-22-00"), true);
+    })
+
   })
 
 })
